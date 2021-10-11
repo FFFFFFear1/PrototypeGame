@@ -2,9 +2,13 @@
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 5;
+    [SerializeField] private float maxSpeed = 5;
+    [SerializeField] private float timeToMaxSpeed = 1f;
 
-    private float speedModifier = 0.01f;
+    private float speed = 0;
+    private float accelRatePerSec;
+
+    private float modifierVelocityX = 0.01f;
 
     private Vector3 startPositionMouse;
     private Vector3 startPositionPlayer;
@@ -13,9 +17,14 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
         playerAnim = GetComponent<Animator>();
 
         startPositionPlayer = transform.position;
+
+        accelRatePerSec = maxSpeed / timeToMaxSpeed;
     }
 
     void Update()
@@ -28,17 +37,21 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            var directionX = startPositionMouse.x - Input.mousePosition.x;
-            var x = directionX * speedModifier;
+            var directionX = Input.mousePosition.x - startPositionMouse.x;
+            var x = directionX * modifierVelocityX;
+
+            speed += accelRatePerSec * Time.fixedDeltaTime;
 
             transform.position = new Vector3(
                 startPositionPlayer.x + x,
                 transform.position.y,
-                transform.position.z + (speed * -1) * Time.deltaTime); ;
+                transform.position.z + Mathf.Min(speed, maxSpeed) * Time.deltaTime);
         }
 
         if(Input.GetMouseButtonUp(0))
         {
+            speed = 0;
+
             startPositionPlayer = transform.position;
             playerAnim.SetBool("isRun", false);
         }
