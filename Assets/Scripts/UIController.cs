@@ -30,7 +30,7 @@ public class UIController : MonoBehaviour
         get { return coinsCount; }
         set 
         { 
-            coinsCount += value;
+            coinsCount = value;
             OnCoinsChanged();
         }
     }
