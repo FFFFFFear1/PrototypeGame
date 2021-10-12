@@ -3,27 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
+    [SerializeField] private GameObject finishPanel;
+    [SerializeField] private TextMeshProUGUI finishText;
     [SerializeField] private TextMeshProUGUI coinsText;
 
     private int coinsCount;
+    private bool pause = false;
 
-    public Action OnCoinsChanged;
-
+    public Action OnGamePaused;
     public static UIController instance;
 
-    void Start()
+    private void Start()
     {
         instance = this;
-        OnCoinsChanged += UpdateCoinsView;
     }
 
-    private void UpdateCoinsView()
+    public void FinishPanel()
     {
-        coinsText.text = $"Coins: {coinsCount}";
+        coinsText.gameObject.SetActive(!coinsText.gameObject.activeSelf);
+        finishPanel.SetActive(!finishPanel.activeSelf);
+        finishText.text = $"Coins: {coinsCount}";
     }
+    public void RestartLevel(int index) => SceneManager.LoadScene(index);
+    private void UpdateCoinsView() => coinsText.text = $"Coins: {coinsCount}";
 
     public int CoinsCount
     {
@@ -31,7 +37,17 @@ public class UIController : MonoBehaviour
         set 
         { 
             coinsCount = value;
-            OnCoinsChanged();
+            UpdateCoinsView();
+        }
+    }
+
+    public bool Pause
+    {
+        get { return pause; }
+        set 
+        {
+            pause = value;
+            OnGamePaused();  
         }
     }
 }

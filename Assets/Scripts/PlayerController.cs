@@ -21,14 +21,19 @@ public class PlayerController : MonoBehaviour
         Application.targetFrameRate = 60;
 
         playerAnim = GetComponent<Animator>();
-
         startPositionPlayer = transform.position;
-
         accelRatePerSec = maxSpeed / timeToMaxSpeed;
     }
 
-    void Update()
+    private void Update()
     {
+        //TODO bad!
+        if (UIController.instance.Pause)
+        {
+            playerAnim.SetBool("isRun", false);
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             startPositionMouse = Input.mousePosition;
