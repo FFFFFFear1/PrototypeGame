@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,54 +12,61 @@ public class PlayerController : MonoBehaviour
     private float modifierVelocityX = 0.01f;
 
     private Vector3 startPositionMouse;
-    private Vector3 startPositionPlayer;
+    private Vector3 positionPlayer;
 
     private Animator playerAnim;
 
     private void Start()
     {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
-
         playerAnim = GetComponent<Animator>();
-        startPositionPlayer = transform.position;
+        positionPlayer = transform.position;
         accelRatePerSec = maxSpeed / timeToMaxSpeed;
+
+        UIController.instance.OnGameFinished += Finish;
     }
 
     private void Update()
     {
-        //TODO bad!
-        if (UIController.instance.Pause)
-        {
-            playerAnim.SetBool("isRun", false);
-            return;
-        }
+        if (UIController.instance.Finished) return;
 
         if (Input.GetMouseButtonDown(0))
         {
             startPositionMouse = Input.mousePosition;
             playerAnim.SetBool("isRun", true);
         }
-
         if (Input.GetMouseButton(0))
         {
             var directionX = Input.mousePosition.x - startPositionMouse.x;
             var x = directionX * modifierVelocityX;
 
-            speed += accelRatePerSec * Time.fixedDeltaTime;
+            speed += accelRatePerSec * Time.deltaTime;
 
             transform.position = new Vector3(
-                startPositionPlayer.x + x,
+                positionPlayer.x + x,
                 transform.position.y,
                 transform.position.z + Mathf.Min(speed, maxSpeed) * Time.deltaTime);
         }
-
-        if(Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             speed = 0;
-
-            startPositionPlayer = transform.position;
+            positionPlayer = transform.position;
             playerAnim.SetBool("isRun", false);
         }
+    }
+
+    private void Finish() => StartCoroutine(Delay());
+
+    private IEnumerator Delay()
+    {
+        var timer = 0f;
+
+        while (timer < timeToMaxSpeed)
+        {
+            transform.Translate(Vector3.forward * maxSpeed * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+
+        playerAnim.SetBool("isRun", false);
     }
 }

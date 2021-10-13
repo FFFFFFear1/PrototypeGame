@@ -12,24 +12,28 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinsText;
 
     private int coinsCount;
-    private bool pause = false;
+    private bool finished = false;
 
-    public Action OnGamePaused;
+    public Action OnGameFinished;
     public static UIController instance;
 
-    private void Start()
+    private void Awake()
     {
         instance = this;
+        OnGameFinished += FinishPanel;
     }
 
-    public void FinishPanel()
+    public void RestartLevel(int index) => SceneManager.LoadScene(index);
+
+    private void UpdateCoinsView() => coinsText.text = $"Coins: {coinsCount}";
+
+    private void FinishPanel()
     {
+        finished = true;
         coinsText.gameObject.SetActive(!coinsText.gameObject.activeSelf);
         finishPanel.SetActive(!finishPanel.activeSelf);
         finishText.text = $"Coins: {coinsCount}";
     }
-    public void RestartLevel(int index) => SceneManager.LoadScene(index);
-    private void UpdateCoinsView() => coinsText.text = $"Coins: {coinsCount}";
 
     public int CoinsCount
     {
@@ -41,13 +45,8 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public bool Pause
+    public bool Finished
     {
-        get { return pause; }
-        set 
-        {
-            pause = value;
-            OnGamePaused();  
-        }
+        get { return finished; }
     }
 }

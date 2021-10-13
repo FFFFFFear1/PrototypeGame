@@ -8,8 +8,7 @@ public class Finish : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            UIController.instance.OnGamePaused += UIController.instance.FinishPanel;
-            UIController.instance.Pause = true;
+            UIController.instance.OnGameFinished();
         }
     }
 }
