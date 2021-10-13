@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class UIController : MonoBehaviour
 {
     [SerializeField] private GameObject finishPanel;
+    [SerializeField] private GameObject coinsPanel;
+
     [SerializeField] private TextMeshProUGUI finishText;
     [SerializeField] private TextMeshProUGUI coinsText;
 
@@ -19,6 +21,9 @@ public class UIController : MonoBehaviour
 
     private void Awake()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 144;
+
         instance = this;
         OnGameFinished += FinishPanel;
     }
@@ -30,7 +35,7 @@ public class UIController : MonoBehaviour
     private void FinishPanel()
     {
         finished = true;
-        coinsText.gameObject.SetActive(!coinsText.gameObject.activeSelf);
+        coinsPanel.gameObject.SetActive(!coinsPanel.gameObject.activeSelf);
         finishPanel.SetActive(!finishPanel.activeSelf);
         finishText.text = $"Coins: {coinsCount}";
     }
