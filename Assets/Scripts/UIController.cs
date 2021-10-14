@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
     private bool finished = false;
 
     public Action OnGameFinished;
+    public Action OnUIChanged;
     public static UIController instance;
 
     private void Awake()
@@ -26,6 +27,7 @@ public class UIController : MonoBehaviour
 
         instance = this;
         OnGameFinished += FinishPanel;
+        OnUIChanged += UpdateCoinsView;
     }
 
     public void RestartLevel(int index) => SceneManager.LoadScene(index);
@@ -46,7 +48,7 @@ public class UIController : MonoBehaviour
         set 
         { 
             coinsCount = value;
-            UpdateCoinsView();
+            OnUIChanged();
         }
     }
 

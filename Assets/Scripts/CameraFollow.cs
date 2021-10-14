@@ -10,11 +10,16 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float smoothZ = 0.125f;
     [SerializeField] private float smoothX = 0.025f;
 
+    private Vector3 smoothedPositionZ;
+    private Vector3 smoothedPositionX;
+
     private void LateUpdate()
     {
         var newPosition = target.position + offset;
-        var smoothedPositionZ = Vector3.Lerp(transform.position, newPosition, smoothZ);
-        var smoothedPositionX = Vector3.Lerp(transform.position, newPosition, smoothX);
+        smoothedPositionX = Vector3.Lerp(transform.position, newPosition, smoothX);
+
+        if (!UIController.instance.Finished)
+            smoothedPositionZ = Vector3.Lerp(transform.position, newPosition, smoothZ);
 
         transform.position = new Vector3(smoothedPositionX.x, smoothedPositionZ.y, smoothedPositionZ.z);
     }
